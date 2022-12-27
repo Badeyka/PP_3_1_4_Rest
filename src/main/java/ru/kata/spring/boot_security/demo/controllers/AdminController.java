@@ -38,7 +38,7 @@ public class AdminController {
 
     @PostMapping("/new")
     public String create(@ModelAttribute("user") User user, @RequestParam(value="role") String role, Model model) {
-        if (!userService.save(user, "ROLE_USER")){
+        if (userService.save(user, "ROLE_USER")){
             model.addAttribute("usernameError", "Пользователь с таким именем уже существует");
             return "admin/new";
         }

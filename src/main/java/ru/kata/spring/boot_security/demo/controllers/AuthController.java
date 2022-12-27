@@ -28,7 +28,7 @@ public class AuthController {
 
     @PostMapping("/registration")
     public String performRegistration(@ModelAttribute("user") User user, Model model) {
-        if (!userService.save(user, "ROLE_USER")){
+        if (userService.save(user, "ROLE_USER")){
             model.addAttribute("usernameError", "Пользователь с таким именем уже существует");
             return "auth/registration";
         }
