@@ -14,6 +14,7 @@ import javax.persistence.Table;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "users")
@@ -32,8 +33,8 @@ public class User implements UserDetails {
     @Column(name = "age")
     private Integer age;
 
-    @Column(name = "username")
-    private String username;
+    @Column(name = "email", unique = true, nullable = true)
+    private String email;
 
     @Column(name = "password")
     private String password;
@@ -44,12 +45,21 @@ public class User implements UserDetails {
     public User() {
     }
 
-    public User(String firstName, String lastName, Integer age, String username, String password) {
+    public User(String firstName, String lastName, Integer age, String email, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.age = age;
-        this.username = username;
+        this.email = email;
         this.password = password;
+    }
+
+    public Set<String> getRolesNames() {
+        return roles.stream().map(Role::getName).collect(Collectors.toSet());
+    }
+
+    @Override
+    public String getUsername() {
+        return getEmail();
     }
 
     @Override
@@ -62,8 +72,8 @@ public class User implements UserDetails {
         return password;
     }
 
-    public String getUsername() {
-        return username;
+    public String getEmail() {
+        return email;
     }
 
     @Override
@@ -94,8 +104,8 @@ public class User implements UserDetails {
         this.id = id;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public void setPassword(String password) {
@@ -139,16 +149,16 @@ public class User implements UserDetails {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return id.equals(user.id) && username.equals(user.username);
+        return id.equals(user.id) && email.equals(user.email);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, username);
+        return Objects.hash(id, email);
     }
 
     @Override
     public String toString() {
-        return username;
+        return email;
     }
 }

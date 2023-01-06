@@ -9,13 +9,15 @@ import java.util.List;
 
 public interface UserService extends UserDetailsService {
 
-    User findByUsername(String username);
+    User findById(Long id);
 
-    UserDetails loadUserByUsername(String username) throws UsernameNotFoundException;
+    User findByEmail(String email);
+
+    UserDetails loadUserByUsername(String email) throws UsernameNotFoundException;
 
     boolean save(User user, String role);
 
-    void deleteByUsername(String username);
+    void deleteById(Long id);
 
     void update(User updateUser, String role);
 

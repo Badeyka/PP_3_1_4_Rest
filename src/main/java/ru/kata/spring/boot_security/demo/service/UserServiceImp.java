@@ -34,18 +34,23 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
-    public User findByUsername(String username) {
-        return userRepository.findByUsername(username);
+    public User findById(Long id) {
+        return userRepository.findByID(id);
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = findByUsername(username);
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = findByEmail(email);
         if (user == null) {
-            throw new UsernameNotFoundException(String.format("User '%s' not found", username));
+            throw new UsernameNotFoundException(String.format("User '%s' not found", email));
         }
 
-        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
+        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(),
                 mapRolesToAuthorities(user.getRoles()));
     }
 
@@ -53,18 +58,18 @@ public class UserServiceImp implements UserService {
     @Override
     public boolean save(User user, String role) {
 
-        if (userRepository.findByUsername(user.getUsername()) != null) {
+        if (userRepository.findByEmail(user.getEmail()) != null) {
             return true;
         }
 
-        if (role.equals("ROLE_USER")) {
+        if (role.equals("USER")) {
 
             user.setRoles(Collections.singleton(new Role(2L, "ROLE_USER")));
             user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
             userRepository.save(user);
             return false;
         }
-        if (role.equals("ROLE_ADMIN")) {
+        if (role.equals("ADMIN")) {
             user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
 
             Set<Role> roles = new HashSet<>();
@@ -80,8 +85,8 @@ public class UserServiceImp implements UserService {
 
     @Transactional
     @Override
-    public void deleteByUsername(String username) {
-        User userFromDB = userRepository.findByUsername(username);
+    public void deleteById(Long id) {
+        User userFromDB = userRepository.findByID(id);
         if (userFromDB != null) {
             userRepository.delete(userFromDB);
         }
@@ -90,16 +95,22 @@ public class UserServiceImp implements UserService {
     @Transactional
     @Override
     public void update(User updateUser, String role) {
-        User user = userRepository.findById(updateUser.getId()).get();
-        user.setUsername(updateUser.getUsername());
+        User user = userRepository.findByID(updateUser.getId());
+
+        user.setFirstName(updateUser.getFirstName());
+        user.setLastName(updateUser.getLastName());
+        user.setAge(updateUser.getAge());
+        user.setEmail(updateUser.getEmail());
         user.setPassword(bCryptPasswordEncoder.encode(updateUser.getPassword()));
 
-        if (role.equals("ROLE_USER")) {
+        if (role.equals("USER")) {
             Set<Role> roles = new HashSet<>();
             roles.add(new Role(2L, "ROLE_USER"));
             user.setRoles(roles);
         }
-        if (role.equals("ROLE_ADMIN")) {
+
+
+        if (role.equals("ADMIN")) {
             Set<Role> roles = new HashSet<>();
             roles.add(new Role(1L, "ROLE_ADMIN"));
             roles.add(new Role(2L, "ROLE_USER"));

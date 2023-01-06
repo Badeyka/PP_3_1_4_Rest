@@ -3,16 +3,104 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>User</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <title>Admin panel</title>
 </head>
 <body>
-Привет
-<h1 th:text="${user.username}"></h1>
 
-<form th:action="@{/logout}" th:method="POST">
-    <input type="submit" value="Logout">
-</form>
+<!--навбар-->
+<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <span class="navbar-brand h5">
+                            <span th:text="${user.email}"></span>
+                            <span>with roles: </span>
+                            <span th:each="role : ${user.roles}">
+                                <span th:text="${role}"></span>
+                            </span>
+                    </span>
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="/logout">Logout</a>
+            </li>
+        </ul>
+    </div>
+</nav>
 
+<div class="row" style="height: 38em">
+    <!--слева-->
+    <div class="col-2 bg-body">
+        <br>
+        <ul class="nav nav-pills flex-column">
+            <div th:if="${user.getRolesNames().contains('ROLE_ADMIN')}">
+                <li class="nav-item">
+                    <a class="nav-link " aria-current="page" th:href="@{/admin}">Admin</a>
+                </li>
+            </div>
+            <li class="nav-item">
+                <a class="nav-link active" th:href="@{/user}">User</a>
+            </li>
+        </ul>
+    </div>
+
+    <!--справа-->
+    <div class="col-10 bg-light">
+        <br>
+        <h1>
+            User information-page
+        </h1>
+        <div class="tab-content" id="nav-tabContent">
+            <div class="tab-pane fade show active" id="nav-users" role="tabpanel"
+                 aria-labelledby="nav-users-tab">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>About user</h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-hover table-striped">
+                            <thead>
+                            <tr>
+                                <th> ID</th>
+                                <th> Firstname</th>
+                                <th> Lastname</th>
+                                <th> Age</th>
+                                <th> Email</th>
+                                <th> Role</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr class="align-middle">
+                                <td th:text="${user.id}"></td>
+                                <td th:text="${user.firstName}"></td>
+                                <td th:text="${user.lastName}"></td>
+                                <td th:text="${user.age}"></td>
+                                <td th:text="${user.email}"></td>
+                                <td>
+                                    <span th:each="role : ${user.roles}">
+                                        <span th:text="${role}"></span>
+                                    </span>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+            integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+            integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+            crossorigin="anonymous"></script>
 </body>
-
 </html>

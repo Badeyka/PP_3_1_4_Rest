@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import ru.kata.spring.boot_security.demo.models.User;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
+import java.security.Principal;
 
 @Controller
 @RequestMapping("/admin")
@@ -26,39 +27,27 @@ public class AdminController {
     }
 
     @GetMapping
-    public String admin(Model model) {
+    public String admin(Model model, Principal principal) {
         model.addAttribute("users", userService.allUsers());
+        User user = userService.findByEmail(principal.getName());
+        model.addAttribute("user", user);
         return "admin/admin";
     }
 
-    @GetMapping("/new")
-    public String newUser(@ModelAttribute("user") User user) {
-        return "admin/new";
-    }
-
     @PostMapping("/new")
-    public String create(@ModelAttribute("user") User user, @RequestParam(value="role") String role, Model model) {
-        if (userService.save(user, "ROLE_USER")){
-            model.addAttribute("usernameError", "Пользователь с таким именем уже существует");
-            return "admin/new";
-        }
+    public String create(@ModelAttribute("user") User user, @RequestParam(value = "role") String role, Model model) {
+        userService.save(user, role);
         return "redirect:/admin";
     }
 
-    @DeleteMapping("/{username}/delete")
-    public String delete(@PathVariable(value = "username") String username) {
-        userService.deleteByUsername(username);
-    return "redirect:/admin";
-    }
-
-    @GetMapping("/edit/{username}")
-    public String edit(Model model, @PathVariable(value = "username") String username) {
-        model.addAttribute("user", userService.findByUsername(username));
-        return "admin/edit";
+    @DeleteMapping("/delete/{id}")
+    public String delete(@PathVariable(value = "id") Long id) {
+        userService.deleteById(id);
+        return "redirect:/admin";
     }
 
     @PutMapping("/edit")
-    public String update(@ModelAttribute("user") User user, @RequestParam(value="role") String role) {
+    public String update(@ModelAttribute("user") User user, @RequestParam(value = "role") String role) {
         userService.update(user, role);
         return "redirect:/admin";
     }
