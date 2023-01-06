@@ -35,7 +35,7 @@ public class AdminController {
     }
 
     @PostMapping("/new")
-    public String create(@ModelAttribute("user") User user, @RequestParam(value = "role") String role, Model model) {
+    public String create(@ModelAttribute("user") User user, @RequestParam(value = "role", required = false) String role) {
         userService.save(user, role);
         return "redirect:/admin";
     }
@@ -47,7 +47,7 @@ public class AdminController {
     }
 
     @PutMapping("/edit")
-    public String update(@ModelAttribute("user") User user, @RequestParam(value = "role") String role) {
+    public String update(@ModelAttribute("user") User user, @RequestParam(value = "role", required = false) String role) {
         userService.update(user, role);
         return "redirect:/admin";
     }

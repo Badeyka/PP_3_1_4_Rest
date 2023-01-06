@@ -62,7 +62,7 @@ public class UserServiceImp implements UserService {
             return true;
         }
 
-        if (role.equals("USER")) {
+        if (role==null || role.equals("USER")) {
 
             user.setRoles(Collections.singleton(new Role(2L, "ROLE_USER")));
             user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
@@ -103,20 +103,20 @@ public class UserServiceImp implements UserService {
         user.setEmail(updateUser.getEmail());
         user.setPassword(bCryptPasswordEncoder.encode(updateUser.getPassword()));
 
-        if (role.equals("USER")) {
-            Set<Role> roles = new HashSet<>();
-            roles.add(new Role(2L, "ROLE_USER"));
-            user.setRoles(roles);
+        if(!(role == null)) {
+            if (role.equals("USER")) {
+                Set<Role> roles = new HashSet<>();
+                roles.add(new Role(2L, "ROLE_USER"));
+                user.setRoles(roles);
+            }
+
+            if (role.equals("ADMIN")) {
+                Set<Role> roles = new HashSet<>();
+                roles.add(new Role(1L, "ROLE_ADMIN"));
+                roles.add(new Role(2L, "ROLE_USER"));
+                user.setRoles(roles);
+            }
         }
-
-
-        if (role.equals("ADMIN")) {
-            Set<Role> roles = new HashSet<>();
-            roles.add(new Role(1L, "ROLE_ADMIN"));
-            roles.add(new Role(2L, "ROLE_USER"));
-            user.setRoles(roles);
-        }
-
         userRepository.save(user);
     }
 
