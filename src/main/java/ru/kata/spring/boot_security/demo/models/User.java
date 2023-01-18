@@ -11,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
@@ -41,6 +42,9 @@ public class User implements UserDetails {
 
     @ManyToMany(fetch = FetchType.LAZY)
     private Set<Role> roles;
+
+    @Transient
+    private String role;
 
     public User() {
     }
@@ -150,6 +154,14 @@ public class User implements UserDetails {
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
         return id.equals(user.id) && email.equals(user.email);
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
     @Override

@@ -35,7 +35,12 @@ public class UserServiceImp implements UserService {
 
     @Override
     public User findById(Long id) {
-        return userRepository.findByID(id);
+        User user = userRepository.findByID(id);
+        if (user.getRoles().size() == 2) {
+            user.setRole("ADMIN");
+        } else user.setRole("USER");
+
+        return user;
     }
 
     @Override
@@ -62,7 +67,7 @@ public class UserServiceImp implements UserService {
             return true;
         }
 
-        if (role==null || role.equals("USER")) {
+        if (role == null || role.equals("USER")) {
 
             user.setRoles(Collections.singleton(new Role(2L, "ROLE_USER")));
             user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
@@ -87,6 +92,7 @@ public class UserServiceImp implements UserService {
     @Override
     public void deleteById(Long id) {
         User userFromDB = userRepository.findByID(id);
+
         if (userFromDB != null) {
             userRepository.delete(userFromDB);
         }
@@ -103,7 +109,7 @@ public class UserServiceImp implements UserService {
         user.setEmail(updateUser.getEmail());
         user.setPassword(bCryptPasswordEncoder.encode(updateUser.getPassword()));
 
-        if(!(role == null)) {
+        if (!(role == null)) {
             if (role.equals("USER")) {
                 Set<Role> roles = new HashSet<>();
                 roles.add(new Role(2L, "ROLE_USER"));
