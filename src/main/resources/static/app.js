@@ -59,6 +59,16 @@ async function allUsers() {
 
 // New User
 async function newUser() {
+    await fetch("http://localhost:8080/api/admin/roles")
+        .then(res => res.json())
+        .then(roles => {
+            roles.forEach(role => {
+                let el = document.createElement("option");
+                el.text = role.name.substring(5);
+                el.value = role.id;
+                $('#inputNewRoles')[0].appendChild(el);
+            })
+        })
 
     const form = document.forms["formNewUser"];
 
@@ -66,6 +76,13 @@ async function newUser() {
 
     function addNewUser(e) {
         e.preventDefault();
+        let newUserRoles = [];
+        for (let i = 0; i < form.roles.options.length; i++) {
+            if (form.roles.options[i].selected) newUserRoles.push({
+                id : form.roles.options[i].value,
+                name : form.roles.options[i].name
+            })
+        }
 
         fetch("http://localhost:8080/api/admin/new", {
             method: 'POST', headers: {'Content-Type': 'application/json'},
@@ -76,7 +93,7 @@ async function newUser() {
                 age: form.age.value,
                 email: form.email.value,
                 password: form.password.value,
-                role: form.role.value
+                roles: newUserRoles
             })
 
         }).then(() => {
@@ -104,6 +121,27 @@ async function showEditModal(id) {
     form.age.value = user.age;
     form.email.value = user.email;
     form.password.value = user.password;
+
+    $('#editRoles').empty();
+
+    await fetch("http://localhost:8080/api/admin/roles")
+        .then(res => res.json())
+        .then(roles => {
+            roles.forEach(role => {
+                let selectedRole = false;
+                for (let i = 0; i < user.roles.length; i++) {
+                    if (user.roles[i].name === role.name) {
+                        selectedRole = true;
+                        break;
+                    }
+                }
+                let el = document.createElement("option");
+                el.text = role.name.substring(5);
+                el.value = role.id;
+                if (selectedRole) el.selected = true;
+                $('#editRoles')[0].appendChild(el);
+            })
+        });
 }
 
 $(async function () {
@@ -114,6 +152,14 @@ function editUser() {
     const editForm = document.forms["formEdit"];
     editForm.addEventListener("submit", ev => {
         ev.preventDefault();
+
+        let editUserRoles = [];
+        for (let i = 0; i < editForm.roles.options.length; i++) {
+            if (editForm.roles.options[i].selected) editUserRoles.push({
+                id : editForm.roles.options[i].value,
+                name : editForm.roles.options[i].name
+            })
+        }
 
         fetch("http://localhost:8080/api/admin/edit", {
             method: 'PUT',
@@ -126,7 +172,7 @@ function editUser() {
                 age: editForm.age.value,
                 email: editForm.email.value,
                 password: editForm.password.value,
-                role: editForm.role.value
+                roles: editUserRoles
             })
         }).then(() => {
             $('#editFormClose').click();
@@ -150,7 +196,7 @@ async function showDeleteModal(id) {
     form.lastName.value = user.lastName;
     form.age.value = user.age;
     form.email.value = user.email;
-    form.role.value = user.role;
+    form.roles.value = user.roles[0].name.substring(5);
 }
 
 async function getUser(id) {

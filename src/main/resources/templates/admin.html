@@ -126,11 +126,13 @@
                                                id="inputNewPassword" placeholder="Password">
                                     </div>
                                     <div class="form-group ">
-                                        <label for="inputNewRole"><strong>Role</strong></label>
-                                        <select name="role" multiple class="form-control" size="2" id="inputNewRole">
-                                            <option>ADMIN</option>
-                                            <option>USER</option>
-                                        </select>
+                                        <label class="container-fluid"
+                                               for="inputNewRoles"><strong>Role</strong>
+                                            <select id="inputNewRoles" class="form-control" name="roles"
+                                                    multiple size="2">
+
+                                            </select>
+                                        </label>
                                     </div>
 
                                     <button type="submit" class="btn btn-success">Add new user</button>
@@ -214,7 +216,7 @@
                         </div>
                         <div class="form-group">
                             <label for="deleteRoles"><strong>Role</strong></label>
-                            <input class="form-control" type="text" name="role" id="deleteRoles" disabled>
+                            <input class="form-control" type="text" name="roles" id="deleteRoles" disabled>
                         </div>
                     </div>
                 </div>
@@ -275,11 +277,8 @@
                             <input class="form-control" type="password" name="password" id="editPassword">
                         </div>
                         <div class="form-group ">
-                            <label for="editRole"><strong>Role</strong></label>
-                            <select class="form-control" name="role" id="editRole"
-                                    multiple size="2">
-                                <option>ADMIN</option>
-                                <option>USER</option>
+                            <label for="editRoles"><strong>Role</strong></label>
+                            <select class="form-control" id="editRoles" name="roles" multiple size="2">
                             </select>
                         </div>
                     </div>

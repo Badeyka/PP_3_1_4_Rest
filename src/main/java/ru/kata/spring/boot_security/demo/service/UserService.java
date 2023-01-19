@@ -15,11 +15,11 @@ public interface UserService extends UserDetailsService {
 
     UserDetails loadUserByUsername(String email) throws UsernameNotFoundException;
 
-    boolean save(User user, String role);
+    void save(User user);
 
     void deleteById(Long id);
 
-    void update(User updateUser, String role);
+    void update(User updateUser);
 
     List<User> allUsers();
 }

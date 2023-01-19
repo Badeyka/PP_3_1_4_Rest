@@ -35,12 +35,7 @@ public class UserServiceImp implements UserService {
 
     @Override
     public User findById(Long id) {
-        User user = userRepository.findByID(id);
-        if (user.getRoles().size() == 2) {
-            user.setRole("ADMIN");
-        } else user.setRole("USER");
-
-        return user;
+        return userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException(String.format("User with id = '%s' not found", id)));
     }
 
     @Override
@@ -61,37 +56,18 @@ public class UserServiceImp implements UserService {
 
     @Transactional
     @Override
-    public boolean save(User user, String role) {
-
+    public void save(User user) {
         if (userRepository.findByEmail(user.getEmail()) != null) {
-            return true;
+            throw new RuntimeException("User exists");
         }
-
-        if (role == null || role.equals("USER")) {
-
-            user.setRoles(Collections.singleton(new Role(2L, "ROLE_USER")));
-            user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-            userRepository.save(user);
-            return false;
-        }
-        if (role.equals("ADMIN")) {
-            user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-
-            Set<Role> roles = new HashSet<>();
-            roles.add(new Role(1L, "ROLE_ADMIN"));
-            roles.add(new Role(2L, "ROLE_USER"));
-            user.setRoles(roles);
-
-            userRepository.save(user);
-            return false;
-        }
-        return true;
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        userRepository.save(user);
     }
 
     @Transactional
     @Override
     public void deleteById(Long id) {
-        User userFromDB = userRepository.findByID(id);
+        User userFromDB = findById(id);
 
         if (userFromDB != null) {
             userRepository.delete(userFromDB);
@@ -100,29 +76,16 @@ public class UserServiceImp implements UserService {
 
     @Transactional
     @Override
-    public void update(User updateUser, String role) {
-        User user = userRepository.findByID(updateUser.getId());
+    public void update(User updateUser) {
+        User user = findById(updateUser.getId());
 
         user.setFirstName(updateUser.getFirstName());
         user.setLastName(updateUser.getLastName());
         user.setAge(updateUser.getAge());
         user.setEmail(updateUser.getEmail());
         user.setPassword(bCryptPasswordEncoder.encode(updateUser.getPassword()));
+        user.setRoles(updateUser.getRoles());
 
-        if (!(role == null)) {
-            if (role.equals("USER")) {
-                Set<Role> roles = new HashSet<>();
-                roles.add(new Role(2L, "ROLE_USER"));
-                user.setRoles(roles);
-            }
-
-            if (role.equals("ADMIN")) {
-                Set<Role> roles = new HashSet<>();
-                roles.add(new Role(1L, "ROLE_ADMIN"));
-                roles.add(new Role(2L, "ROLE_USER"));
-                user.setRoles(roles);
-            }
-        }
         userRepository.save(user);
     }
 

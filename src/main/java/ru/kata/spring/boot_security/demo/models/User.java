@@ -11,7 +11,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
@@ -43,18 +42,16 @@ public class User implements UserDetails {
     @ManyToMany(fetch = FetchType.LAZY)
     private Set<Role> roles;
 
-    @Transient
-    private String role;
-
     public User() {
     }
 
-    public User(String firstName, String lastName, Integer age, String email, String password) {
+    public User(String firstName, String lastName, Integer age, String email, String password, Set<Role> roles) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.age = age;
         this.email = email;
         this.password = password;
+        this.roles = roles;
     }
 
     public Set<String> getRolesNames() {
@@ -149,28 +146,20 @@ public class User implements UserDetails {
     }
 
     @Override
+    public String toString() {
+        return email;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return id.equals(user.id) && email.equals(user.email);
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
+        return email.equals(user.email);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, email);
-    }
-
-    @Override
-    public String toString() {
-        return email;
+        return Objects.hash(email);
     }
 }
